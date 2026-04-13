@@ -232,10 +232,6 @@ class CollectorAgent:
                 "error": str(e),
                 "timestamp": datetime.utcnow()
             }
-                "status": "error",
-                "error": str(e),
-                "timestamp": datetime.utcnow()
-            }
     
     def _update_or_create_machine(self, db: Session, machine_name: str, data: Dict[str, Any]):
         """Update or create machine record in database"""
