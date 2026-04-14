@@ -6,7 +6,7 @@ import logging
 from typing import List
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
-from sqlalchemy import desc, and_
+from sqlalchemy import desc, and_, text
 
 from fastapi import APIRouter, Depends
 from models.schemas import (
@@ -143,7 +143,7 @@ async def get_health(db: Session = Depends(get_db)):
     try:
         # Check database connectivity
         db_connected = True
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
     except Exception as e:
         logger.error(f"Database connection error: {e}")
         db_connected = False
