@@ -52,9 +52,13 @@ services:
       DATABASE_URL: postgresql://citrix_user:citrix_password@postgres:5432/citrix_daas_db
       BACKEND_HOST: 0.0.0.0
       BACKEND_PORT: 8000
-      COLLECTION_INTERVAL_SECONDS: 60
+      COLLECTION_INTERVAL_SECONDS: ${COLLECTION_INTERVAL_SECONDS:-60}
       OLLAMA_HOST: http://ollama:11434
       OLLAMA_MODEL: mistral
+      CITRIX_CLIENT_ID: ${CITRIX_CLIENT_ID:-}
+      CITRIX_CLIENT_SECRET: ${CITRIX_CLIENT_SECRET:-}
+      CITRIX_CUSTOMER_ID: ${CITRIX_CUSTOMER_ID:-}
+      CITRIX_API_URL: ${CITRIX_API_URL:-https://api.cloud.com}
     ports:
       - "8000:8000"
     volumes:
