@@ -158,8 +158,10 @@ function updateMachines(machines) {
     machinesGrid.innerHTML = machines.map(machine => {
         const cpuPercent = Math.min(machine.cpu_usage, 100);
         const memPercent = Math.min(machine.memory_usage, 100);
+        const diskPercent = Math.min(machine.disk_usage || 0, 100);
         const cpuClass = cpuPercent > 85 ? 'high' : cpuPercent > 70 ? 'medium' : '';
         const memClass = memPercent > 85 ? 'high' : memPercent > 70 ? 'medium' : '';
+        const diskClass = diskPercent > 90 ? 'high' : diskPercent > 70 ? 'medium' : '';
         
         return `
             <div class="machine-card">
@@ -172,6 +174,7 @@ function updateMachines(machines) {
                     <span class="state-badge ${machine.power_state.toLowerCase()}">
                         Power: ${escapeHtml(machine.power_state)}
                     </span>
+                    ${machine.is_in_maintenance ? '<span class="state-badge maintenance">🔧 Maintenance</span>' : ''}
                 </div>
                 
                 <div class="metric-item">
@@ -189,6 +192,14 @@ function updateMachines(machines) {
                         <div class="progress-fill ${memClass}" style="width: ${memPercent}%"></div>
                     </div>
                 </div>
+
+                <div class="metric-item">
+                    <div class="metric-label">Disk Usage</div>
+                    <div class="metric-value">${diskPercent.toFixed(1)}%</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill ${diskClass}" style="width: ${diskPercent}%"></div>
+                    </div>
+                </div>
                 
                 <div class="metric-item">
                     <div class="metric-label">Sessions</div>
@@ -197,8 +208,15 @@ function updateMachines(machines) {
                         Available: ${machine.available_sessions} | 
                         Unavailable: ${machine.unavailable_sessions}
                     </div>
+                    ${machine.ghost_sessions > 0 ? `<div style="font-size: 12px; color: #d32f2f; font-weight: bold;">👻 Ghost Sessions: ${machine.ghost_sessions}</div>` : ''}
                 </div>
-                
+
+                <div class="metric-item">
+                    <div class="metric-label">HDX Latency</div>
+                    <div class="metric-value">${(machine.hdx_latency || 0).toFixed(1)}ms</div>
+                    ${(machine.hdx_latency || 0) > 100 ? '<div style="font-size: 12px; color: #d32f2f;">⚠️ High latency detected</div>' : ''}
+                </div>
+
                 <div class="metric-item">
                     <div class="metric-label">Disconnect Rate</div>
                     <div class="metric-value">${machine.disconnect_rate.toFixed(1)}%</div>
@@ -207,6 +225,13 @@ function updateMachines(machines) {
                              style="width: ${Math.min(machine.disconnect_rate, 100)}%"></div>
                     </div>
                 </div>
+
+                <div class="metric-item">
+                    <div class="metric-label">Uptime</div>
+                    <div class="metric-value">${(machine.uptime_percentage || 100).toFixed(1)}%</div>
+                </div>
+
+                ${machine.failed_logins > 0 ? `<div style="font-size: 12px; color: #ff9800; padding: 6px; background: #fff3e0; border-radius: 4px;">🔒 Failed Logins: ${machine.failed_logins}</div>` : ''}
                 
                 <div style="font-size: 12px; color: #999; margin-top: 8px;">
                     Last updated: ${new Date(machine.last_updated).toLocaleTimeString()}
