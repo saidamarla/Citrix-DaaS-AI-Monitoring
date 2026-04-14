@@ -60,6 +60,12 @@ class CollectorAgent:
                 "session_count": 12,
                 "available_sessions": 10,
                 "unavailable_sessions": 2,
+                "ghost_sessions": 0,
+                "hdx_latency": 25.5,
+                "disk_usage": 65.0,
+                "failed_logins": 0,
+                "is_in_maintenance": False,
+                "uptime_percentage": 100.0,
             }
 
     def _get_access_token(self) -> Optional[str]:
@@ -139,6 +145,12 @@ class CollectorAgent:
                 "available_sessions": machine.get("available_sessions", 0),
                 "unavailable_sessions": machine.get("session_count", 0) - machine.get("available_sessions", 0),
                 "disconnect_rate": machine.get("disconnect_rate_percent", 0.0),
+                "ghost_sessions": machine.get("ghost_sessions", 0),
+                "hdx_latency": machine.get("hdx_latency_ms", 0.0),
+                "disk_usage": machine.get("disk_usage_percent", 0.0),
+                "failed_logins": machine.get("failed_logins", 0),
+                "is_in_maintenance": machine.get("is_in_maintenance", False),
+                "uptime_percentage": machine.get("uptime_percentage", 100.0),
             })
 
         return machines
@@ -248,6 +260,12 @@ class CollectorAgent:
             machine.session_count = data["session_count"]
             machine.available_sessions = data["available_sessions"]
             machine.unavailable_sessions = data["unavailable_sessions"]
+            machine.ghost_sessions = data.get("ghost_sessions", 0)
+            machine.hdx_latency = data.get("hdx_latency", 0.0)
+            machine.disk_usage = data.get("disk_usage", 0.0)
+            machine.failed_logins = data.get("failed_logins", 0)
+            machine.is_in_maintenance = data.get("is_in_maintenance", False)
+            machine.uptime_percentage = data.get("uptime_percentage", 100.0)
             machine.last_updated = datetime.utcnow()
         else:
             machine = VDAMachine(
@@ -260,6 +278,12 @@ class CollectorAgent:
                 session_count=data["session_count"],
                 available_sessions=data["available_sessions"],
                 unavailable_sessions=data["unavailable_sessions"],
+                ghost_sessions=data.get("ghost_sessions", 0),
+                hdx_latency=data.get("hdx_latency", 0.0),
+                disk_usage=data.get("disk_usage", 0.0),
+                failed_logins=data.get("failed_logins", 0),
+                is_in_maintenance=data.get("is_in_maintenance", False),
+                uptime_percentage=data.get("uptime_percentage", 100.0),
             )
             db.add(machine)
         
@@ -272,6 +296,10 @@ class CollectorAgent:
             ("memory_usage", data["memory_usage"]),
             ("disconnect_rate", data["disconnect_rate"]),
             ("session_count", data["session_count"]),
+            ("ghost_sessions", data.get("ghost_sessions", 0)),
+            ("hdx_latency", data.get("hdx_latency", 0.0)),
+            ("disk_usage", data.get("disk_usage", 0.0)),
+            ("uptime_percentage", data.get("uptime_percentage", 100.0)),
         ]
         
         for metric_type, metric_value in metrics:

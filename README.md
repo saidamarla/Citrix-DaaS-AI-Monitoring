@@ -5,17 +5,26 @@ A complete, production-ready AI-powered monitoring system for Citrix Cloud DaaS 
 ## Features
 
 ✅ **Real-time Metrics Collection** - Simulates/integrates Citrix Cloud Monitor API
-✅ **Rule-Based Issue Detection** - Detects:
-  - VDA unregistered (>5 min)
-  - High disconnect rate (>20%)
-  - Session unavailability (>30%)
-  - High CPU usage (>85%)
-  - High memory usage (>85%)
-  - Unexpected power-off states
+✅ **Enterprise-Grade Rule-Based Detection** - Detects 12+ issue types:
+  - **Session Issues:** Ghost sessions (disconnected), high disconnect rate (>20%), session unavailability (>30%)
+  - **Machine Health:** VDA unregistered (>5 min), low uptime (<95%), maintenance mode
+  - **Resource Usage:** High CPU (>85%), high memory (>85%), high disk usage (>90%)
+  - **Performance:** High HDX latency (>100ms)
+  - **Security:** Failed login attempts (>5)
+  - **Power State:** Unexpected power-off states
+
+✅ **Advanced Metrics Tracking:**
+  - Ghost/disconnected sessions
+  - HDX latency monitoring
+  - Disk usage percentage
+  - Failed login attempts
+  - Maintenance mode status
+  - Uptime percentage tracking
 
 ✅ **AI-Powered Explanations** - Uses local Ollama LLM to explain:
   - Root cause of issues
   - Suggested fixes and remediation steps
+  - Context-aware recommendations
 
 ✅ **Beautiful Web Dashboard** - Real-time metrics visualization
 ✅ **PostgreSQL Database** - Persistent storage of metrics and alerts
@@ -170,26 +179,28 @@ LOG_LEVEL=INFO  # DEBUG, INFO, WARNING, ERROR
 
 **Collector Agent:**
 - Simulates or integrates with Citrix Cloud API
-- Collects VDA machine metrics:
-  - CPU, Memory, Disk usage
-  - Session counts and availability
-  - Registration state
-  - Power state
-  - Disconnect rate
-- Saves metrics to PostgreSQL
+- Collects comprehensive VDA machine metrics:
+  - **Resource Metrics:** CPU, Memory, Disk usage
+  - **Session Metrics:** Session counts, availability, ghost sessions
+  - **Performance Metrics:** HDX latency, disconnect rate
+  - **Health Metrics:** Registration state, power state, uptime percentage
+  - **Security Metrics:** Failed login attempts
+  - **Status Metrics:** Maintenance mode status
+- Saves metrics to PostgreSQL for historical tracking
 
 ### 2. Analysis & Alert Detection
 
 **Analyzer Agent:**
-- Applies rule-based logic to detect issues
+- Applies 12+ rule-based detection rules
 - Rules check for:
-  - Unregistered VDAs (>5 minutes)
-  - High disconnect rates (>20%)
-  - Session unavailability (>30% unavailable)
-  - High resource usage (CPU >85%, Memory >85%)
-  - Power-off states
-- Creates alerts in database when rules are violated
-- Auto-resolves alerts when issues clear
+  - **Session Issues:** Ghost sessions (>3), High disconnect rates (>20%), Session unavailability (>30%)
+  - **Machine Health:** VDA unregistered (>5 min), Low uptime (<95%), Maintenance mode
+  - **Resource Issues:** High CPU (>85%), High memory (>85%), High disk usage (>90%)
+  - **Performance Issues:** High HDX latency (>100ms)
+  - **Security Issues:** Failed login attempts (>5)
+  - **Power Issues:** Unexpected power-off states
+- Creates severity-based alerts (Critical, Warning, Info)
+- Auto-resolves alerts when underlying issues clear
 
 ### 3. AI Explanation
 

@@ -23,6 +23,12 @@ class VDAMachine(Base):
     session_count = Column(Integer, default=0)
     available_sessions = Column(Integer, default=0)
     unavailable_sessions = Column(Integer, default=0)
+    ghost_sessions = Column(Integer, default=0)  # Disconnected sessions consuming resources
+    hdx_latency = Column(Float, default=0.0)  # Milliseconds
+    disk_usage = Column(Float, default=0.0)  # Percentage
+    failed_logins = Column(Integer, default=0)  # Failed login attempts
+    is_in_maintenance = Column(Boolean, default=False)  # Maintenance mode
+    uptime_percentage = Column(Float, default=100.0)  # Availability percentage
     last_updated = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -81,6 +87,12 @@ class VDAMachineRead(BaseModel):
     session_count: int
     available_sessions: int
     unavailable_sessions: int
+    ghost_sessions: int
+    hdx_latency: float
+    disk_usage: float
+    failed_logins: int
+    is_in_maintenance: bool
+    uptime_percentage: float
     last_updated: datetime
     
     class Config:
@@ -98,6 +110,12 @@ class VDAMachineCreate(BaseModel):
     session_count: int = 0
     available_sessions: int = 0
     unavailable_sessions: int = 0
+    ghost_sessions: int = 0
+    hdx_latency: float = 0.0
+    disk_usage: float = 0.0
+    failed_logins: int = 0
+    is_in_maintenance: bool = False
+    uptime_percentage: float = 100.0
 
 
 class MetricSnapshotRead(BaseModel):

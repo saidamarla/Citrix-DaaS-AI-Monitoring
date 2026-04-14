@@ -132,6 +132,107 @@ class PowerOffRule(Rule):
         return (False, "", "")
 
 
+class GhostSessionsRule(Rule):
+    """Check for ghost sessions (disconnected sessions consuming resources)"""
+    
+    def __init__(self):
+        super().__init__("ghost_sessions", "warning")
+    
+    def check(self, machine: VDAMachine) -> Tuple[bool, str, str]:
+        if machine.ghost_sessions > 3:
+            return (
+                True,
+                f"Ghost Sessions Detected on {machine.machine_name}",
+                f"{machine.ghost_sessions} ghost/disconnected sessions detected consuming resources. "
+                f"Consider terminating these sessions to free up resources."
+            )
+        return (False, "", "")
+
+
+class HighHDXLatencyRule(Rule):
+    """Check if HDX latency is too high"""
+    
+    def __init__(self):
+        super().__init__("high_hdx_latency", "warning")
+    
+    def check(self, machine: VDAMachine) -> Tuple[bool, str, str]:
+        if machine.hdx_latency > 100:
+            return (
+                True,
+                f"High HDX Latency on {machine.machine_name}",
+                f"HDX latency is {machine.hdx_latency:.1f}ms, exceeding the 100ms threshold. "
+                f"This may impact user experience."
+            )
+        return (False, "", "")
+
+
+class HighDiskUsageRule(Rule):
+    """Check if disk usage exceeds 90%"""
+    
+    def __init__(self):
+        super().__init__("high_disk_usage", "warning")
+    
+    def check(self, machine: VDAMachine) -> Tuple[bool, str, str]:
+        if machine.disk_usage > 90:
+            return (
+                True,
+                f"High Disk Usage on {machine.machine_name}",
+                f"Disk usage is {machine.disk_usage:.1f}%, exceeding the 90% threshold. "
+                f"Free up disk space to ensure stability."
+            )
+        return (False, "", "")
+
+
+class FailedLoginsRule(Rule):
+    """Check for excessive failed login attempts"""
+    
+    def __init__(self):
+        super().__init__("failed_logins", "warning")
+    
+    def check(self, machine: VDAMachine) -> Tuple[bool, str, str]:
+        if machine.failed_logins > 5:
+            return (
+                True,
+                f"Excessive Failed Logins on {machine.machine_name}",
+                f"{machine.failed_logins} failed login attempts detected. "
+                f"This may indicate authentication issues or security concerns."
+            )
+        return (False, "", "")
+
+
+class MaintenanceModeRule(Rule):
+    """Check if VDA is in maintenance mode"""
+    
+    def __init__(self):
+        super().__init__("maintenance_mode", "info")
+    
+    def check(self, machine: VDAMachine) -> Tuple[bool, str, str]:
+        if machine.is_in_maintenance:
+            return (
+                True,
+                f"VDA {machine.machine_name} in Maintenance Mode",
+                f"{machine.machine_name} is currently in maintenance mode and not available for user sessions."
+            )
+        return (False, "", "")
+
+
+class LowUptimeRule(Rule):
+    """Check if uptime percentage is below 95%"""
+    
+    def __init__(self):
+        super().__init__("low_uptime", "warning")
+    
+    def check(self, machine: VDAMachine) -> Tuple[bool, str, str]:
+        if machine.uptime_percentage < 95:
+            return (
+                True,
+                f"Low Availability on {machine.machine_name}",
+                f"Machine availability is {machine.uptime_percentage:.1f}%, below the 95% target. "
+                f"Investigate the cause of downtime."
+            )
+        return (False, "", "")
+
+
 class AnalyzerAgent:
     """Analyzes collected metrics and detects issues"""
     
@@ -143,6 +244,12 @@ class AnalyzerAgent:
             HighCPURule(),
             HighMemoryRule(),
             PowerOffRule(),
+            GhostSessionsRule(),
+            HighHDXLatencyRule(),
+            HighDiskUsageRule(),
+            FailedLoginsRule(),
+            MaintenanceModeRule(),
+            LowUptimeRule(),
         ]
     
     def analyze_metrics(self, db: Session) -> Dict[str, Any]:
