@@ -28,6 +28,10 @@ class CollectorAgent:
         # OAuth token management
         self.access_token = None
         self.token_expires_at = None
+        
+        # Always initialize mock data as fallback
+        self.machines_data = {}
+        self._initialize_mock_machines()
 
         # Fallback to mock data if API not configured
         self.use_mock_data = not all([
@@ -38,8 +42,6 @@ class CollectorAgent:
 
         if self.use_mock_data:
             logger.warning("Citrix API credentials not found, using mock data")
-            self.machines_data = {}
-            self._initialize_mock_machines()
         else:
             logger.info("Citrix API credentials found, will use real API")
 
